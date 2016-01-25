@@ -1591,11 +1591,41 @@ Display Objects
 		#bodyLookup.eventOutput#
 	<cfelseif isDefined('bodyLookup.filepath')>
 		<cfinclude template="#bodyLookup.filepath#">
+	<cfelseif variables.$.content('type') eq 'folder'>
+		<cf_CacheOMatic key="folderBody#hash(cgi.query_string)#" nocache="#variables.event.getValue('r').restrict#">
+		 <cfset var filePath=$.siteConfig().lookupDisplayObjectFilePath('dsp_portal.cfm')>
+
+		 <cfif len(filePath)>
+		 	<cfoutput>#dspObject_Include(thefile='dsp_portal.cfm')#</cfoutput>
+		 <cfelse>
+		 	 <cfset filePath=$.siteConfig().lookupDisplayObjectFilePath('dsp_folder.cfm')>
+		 	 <cfif len(filePath)>
+			 	<cfoutput>#dspObject_Include(thefile='dsp_folder.cfm')#</cfoutput>
+			 <cfelse>
+			 	<cfoutput>#dspObject_Include(thefile='folder/index.cfm')#</cfoutput>
+			 </cfif>
+		</cfif>
+		</cf_CacheOMatic>
+	<cfelseif variables.$.content('type') eq 'calendar'>
+		<cf_CacheOMatic key="calendarBody#hash(cgi.query_string)#" nocache="#variables.event.getValue('r').restrict#">
+		 	 <cfset filePath=$.siteConfig().lookupDisplayObjectFilePath('calendar/index.cfm')>
+		 	 <cfif len(filePath)>
+			 	<cfoutput>#dspObject_Include(thefile='calendar/index.cfm')#</cfoutput>
+			 </cfif>
+		</cf_CacheOMatic>
+	<cfelseif variables.$.content('type') eq 'gallery'>
+		<cf_CacheOMatic key="galleryBody#hash(cgi.query_string)#" nocache="#variables.event.getValue('r').restrict#">
+		 	 <cfset filePath=$.siteConfig().lookupDisplayObjectFilePath('gallery/index.cfm')>
+		 	 <cfif len(filePath)>
+			 	<cfoutput>#dspObject_Include(thefile='gallery/index.cfm')#</cfoutput>
+			 </cfif>
+		</cf_CacheOMatic>
 	</cfif>
 	</cfoutput>
 	</cfsavecontent>
 	<cfreturn eventOutput>
 </cffunction>
+
 <cffunction name="dspNestedNavPrimary" output="false" returntype="string">
 		<cfargument name="contentid" type="string">
 		<cfargument name="viewDepth" type="numeric" required="true" default="1">
@@ -2605,6 +2635,7 @@ Display Objects
 	<cfargument name="width" required="false" default="AUTO" />
 	<cfargument name="siteID" required="false" default="#variables.$.event('siteID')#" />
 	<cfargument name="secure" default="false">
+	<cfargument name="useProtocol" default="true">
 	<cfscript>
 		var imageURL = getBean('fileManager').createHREFForImage(argumentCollection=arguments);
 		if ( IsSimpleValue(imageURL) ) {

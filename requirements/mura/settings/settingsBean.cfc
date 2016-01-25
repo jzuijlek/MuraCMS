@@ -1400,4 +1400,17 @@ version 2 without this exception.  You may, if you choose, apply this exception 
 <cffunction name="getDisplayObjects">
 	<cfreturn variables.instance.displayObjectLookup>
 </cffunction>
+
+<cffunction name="discoverBeans" output="false">
+	<cfset var lookups=[
+		'/muraWRM/#getValue('siteid')#/includes',
+		'/muraWRM/#getValue('siteid')#/includes/themes/#getValue('theme')#'
+		]>
+	<cfset var i=1>
+	<cfloop array="#lookups#" index="i">
+		<cfset variables.configBean.registerBeanDir(dir='#i#/model',siteid=getValue('siteid'))>
+	</cfloop>
+	<cfreturn this>	
+</cffunction>
+
 </cfcomponent>
